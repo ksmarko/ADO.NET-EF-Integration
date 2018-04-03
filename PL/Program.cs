@@ -19,7 +19,7 @@ namespace PL
     {
         public override void Load()
         {
-            Bind<IService>().To<ProductService>();
+            Bind<IProductService>().To<ProductService>();
         }
     }
 
@@ -28,14 +28,10 @@ namespace PL
         static void Main(string[] args)
         {
             BLL.Infrastructure.AutoMapperConfig.Initialize();
-
-            //for quest and reserv services binding
             NinjectModule serviceModule = new ServiceModule("DefaultConnection", StorageContext.EF);
             NinjectModule module = new ConnModule();
             var kernel = new StandardKernel(serviceModule, module);
             kernel.Get(typeof(Store));
-
-            //kernel.Load(serviceModule, module);
 
             Console.ReadKey();
         }

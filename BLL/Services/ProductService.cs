@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class ProductService : IService
+    public class ProductService : IProductService
     {
         IUnitOfWork Database { get; set; }
 
@@ -20,19 +20,29 @@ namespace BLL.Services
             Database = uow;
         }
 
-        public IEnumerable<ProductDTO> GetAll()
+        public IEnumerable<ProductDTO> GetProducts()
         {
             return Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(Database.Products.GetAll());
         }
 
         public IEnumerable<ProductDTO> GetProviderProducts(ProviderDTO provider)
         {
-            return GetAll().Where(x => x.Providers.Contains(provider));
+            return GetProducts().Where(x => x.Providers.Contains(provider));
         }
 
-        public IEnumerable<ProviderDTO> GetCategoryProviders(CategoryDTO category)
+        public IEnumerable<ProductDTO> FindProduct(Func<ProductDTO, bool> predicate)
         {
-            var products = GetAll().Where(x => x.Category == category);
+            return GetProducts().Where(predicate);
+        }
+        
+        public IEnumerable<ProviderDTO> GetProviders()
+        {
+            return Mapper.Map<IEnumerable<Provider>, List<ProviderDTO>>(Database.Providers.GetAll());
+        }
+
+        public IEnumerable<ProviderDTO> GetProvidersForCategory(CategoryDTO category)
+        {
+            var products = Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(Database.Products.GetAll()).Where(x => x.Category == category);
             List<ProviderDTO> providers = new List<ProviderDTO>();
 
             foreach (var el in products)
@@ -42,24 +52,24 @@ namespace BLL.Services
             return providers;
         }
 
-        public IEnumerable<ProductDTO> Find(Func<ProductDTO, bool> predicate)
+        public IEnumerable<ProviderDTO> FindProvider(Func<ProviderDTO, bool> predicate)
         {
-            return GetAll().Where(predicate);
+            return GetProviders().Where(predicate);
         }
 
-        public IEnumerable<ProviderDTO> Find(Func<ProviderDTO, bool> predicate)
+        public IEnumerable<ProviderDTO> GetByLocation(string location)
         {
-            return Mapper.Map<IEnumerable<Provider>, List<ProviderDTO>>(Database.Providers.GetAll()).Where(predicate);
-        }
-
-        public IEnumerable<CategoryDTO> Find(Func<CategoryDTO, bool> predicate)
-        {
-            return Mapper.Map<IEnumerable<Category>, List<CategoryDTO>>(Database.Categories.GetAll()).Where(predicate);
+            return GetProviders().Where(x => x.Location.Contains(location));
         }
 
         public void Dispose()
         {
             Database.Dispose();
+        }
+
+        public IEnumerable<CategoryDTO> FindCategory(Func<CategoryDTO, bool> predicate)
+        {
+            return Mapper.Map<IEnumerable<Category>, List<CategoryDTO>>(Database.Categories.GetAll()).Where(predicate);
         }
     }
 }

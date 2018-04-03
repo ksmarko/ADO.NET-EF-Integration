@@ -12,5 +12,10 @@ namespace BLL.DTO
         public string Name { get; set; }
         public string Location { get; set; }
         public virtual ICollection<ProductDTO> Products { get; set; }
+
+        public override string ToString()
+        {
+            return string.Join(" ", Name, Location);
+        }
     }
 }
