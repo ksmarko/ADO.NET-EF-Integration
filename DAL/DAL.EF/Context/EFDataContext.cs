@@ -28,7 +28,11 @@ namespace DAL.DAL.EF.Context
     {
         protected override void Seed(EFDataContext db)
         {
-            db.SaveChanges();
+            //db.Products.Add(new Product { Id = 1, Name = "Laptop", Price = 35000, CategoryId = 1 });
+            //db.Products.Add(new Product { Id = 2, Name = "iPhone 6s", Price = 16000, CategoryId = 1 });
+
+            //db.Categories.Add(new Category { Id = 1, Name = "Electronics" });
+            //db.SaveChanges();
         }
     }
 }
