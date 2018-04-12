@@ -19,7 +19,7 @@ namespace PL
     {
         public override void Load()
         {
-            Bind<IProductService>().To<ProductService>();
+            Bind<IShopService>().To<ShopService>();
         }
     }
 

@@ -18,6 +18,10 @@ namespace BLL.Infrastructure
                 cfg.CreateMap<Product, ProductDTO>();
                 cfg.CreateMap<Provider, ProviderDTO>();
                 cfg.CreateMap<Category, CategoryDTO>();
+
+                cfg.CreateMap<ProductDTO, Product>();
+                cfg.CreateMap<ProviderDTO, Provider>();
+                cfg.CreateMap<CategoryDTO, Category>();
             });
         }
     }

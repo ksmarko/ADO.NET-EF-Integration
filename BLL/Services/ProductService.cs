@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class ProductService : IProductService
+    public class ShopService : IShopService
     {
         IUnitOfWork Database { get; set; }
 
-        public ProductService(IUnitOfWork uow)
+        public ShopService(IUnitOfWork uow)
         {
             Database = uow;
         }
@@ -25,9 +25,14 @@ namespace BLL.Services
             return Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(Database.Products.GetAll());
         }
 
-        public IEnumerable<ProductDTO> GetProviderProducts(ProviderDTO provider)
+        public IEnumerable<ProductDTO> GetProviderProducts(int providerId)
         {
-            return GetProducts().Where(x => x.Providers.Contains(provider));
+            var list = new List<ProductDTO>();
+            var provs = GetProviders().Where(x => x.Id == providerId);
+            foreach (var el in provs)
+                list.AddRange(el.Products);
+
+            return list;
         }
 
         public IEnumerable<ProductDTO> FindProduct(Func<ProductDTO, bool> predicate)
@@ -40,14 +45,16 @@ namespace BLL.Services
             return Mapper.Map<IEnumerable<Provider>, List<ProviderDTO>>(Database.Providers.GetAll());
         }
 
-        public IEnumerable<ProviderDTO> GetProvidersForCategory(CategoryDTO category)
+        public IEnumerable<ProviderDTO> GetProvidersForCategory(int categoryId)
         {
-            var products = Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(Database.Products.GetAll()).Where(x => x.Category == category);
+            var products = Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(Database.Products.GetAll());
             List<ProviderDTO> providers = new List<ProviderDTO>();
 
-            foreach (var el in products)
-                foreach (var el2 in el.Providers)
-                    providers.Add(el2);
+            foreach (var product in products)
+                if (product.CategoryId == categoryId)
+                    foreach (var provider in product.Providers)
+                        if(!providers.Exists(x => x.Name == provider.Name))
+                            providers.Add(provider);
 
             return providers;
         }

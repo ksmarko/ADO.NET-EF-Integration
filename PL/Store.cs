@@ -9,9 +9,9 @@ namespace PL
 {
     public class Store
     {
-        readonly IProductService productService;
+        readonly IShopService productService;
 
-        public Store(IProductService service)
+        public Store(IShopService service)
         {
             this.productService = service;
 
@@ -20,31 +20,24 @@ namespace PL
 
         public void Run()
         {
-            Console.WriteLine("List of products: ");
-
-            foreach (var el in productService.GetProducts())
-                Console.WriteLine(el);
-
-            Console.WriteLine("\nList of Electronics providers: ");
-
-            foreach (var el in productService.GetProvidersForCategory(productService.FindCategory(x => x.Id == 1).FirstOrDefault()))
-                Console.WriteLine(el);
-
-            Console.WriteLine("\nList of provider's products: ");
-
-            foreach (var el in productService.GetProviderProducts(productService.FindProvider(x => x.Id == 1).FirstOrDefault()))
-                Console.WriteLine(el);
-
-            Console.WriteLine("\nList of products with price <= 30000: ");
-
-            foreach (var el in productService.FindProduct(x => x.Price <= 30000))
-                Console.WriteLine(el);
-
-            Console.WriteLine("\nList of providers from Ukraine: ");
+            Print(productService.GetProducts(), "List of products:");
+            Print(productService.GetProvidersForCategory(3), "List of clothes providers");
+            Print(productService.GetProviderProducts(1), "List of provider's products");
+            Print(productService.FindProduct(x => x.Price <= 20000), "List of products with price <= 20000:");
+            Print(new List<string>(), "List of providers from Ukraine:");
 
             foreach (var el in productService.GetByLocation("Ukraine"))
-                Console.WriteLine(el.Name);
+                Console.WriteLine(el);
+        }
 
+        private void Print<T>(IEnumerable<T> list, string caption) where T : class
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n" + caption + "\n");
+            Console.ResetColor();
+
+            foreach (var el in list)
+                Console.WriteLine(el);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace DAL.Shared.Entities
 
         //one to many
         public int? CategoryId { get; set; }
-        public virtual Category Category { get; set; }
 
         //many to many
         public virtual ICollection<Provider> Providers { get; set; }
