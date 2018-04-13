@@ -28,7 +28,7 @@ namespace PL
         static void Main(string[] args)
         {
             BLL.Infrastructure.AutoMapperConfig.Initialize();
-            NinjectModule serviceModule = new ServiceModule("DefaultConnection", StorageContext.EF);
+            NinjectModule serviceModule = new ServiceModule("DefaultConnection", StorageContext.ADO);
             NinjectModule module = new ConnModule();
             var kernel = new StandardKernel(serviceModule, module);
             kernel.Get(typeof(Store));

@@ -18,6 +18,7 @@ namespace DAL.DAL.EF.Context
         {
             Database.SetInitializer<EFDataContext>(new StoreDbInitializer());
         }
+
         public EFDataContext(string connectionString)
             : base(connectionString)
         {

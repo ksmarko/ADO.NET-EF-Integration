@@ -1,4 +1,5 @@
-﻿using DAL.DAL.EF.Interfaces;
+﻿using DAL.DAL.ADO.Repositories;
+using DAL.DAL.EF.Interfaces;
 using DAL.DAL.EF.Repositories;
 using Ninject.Modules;
 using System;
@@ -24,8 +25,8 @@ namespace BLL.Infrastructure
         {
             if (context == StorageContext.EF)
                 Bind<IUnitOfWork>().To<EFUnitOfWork>().WithConstructorArgument(connectionString);
-            //else if (context == StorageContext.ADO)
-            //    Bind<IUnitOfWork>().To<ADOUnitOfWork>().WithConstructorArgument(connectionString);
+            else if (context == StorageContext.ADO)
+                Bind<IUnitOfWork>().To<ADOUnitOfWork>().WithConstructorArgument(connectionString);
         }
     }
 

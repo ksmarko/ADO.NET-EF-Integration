@@ -47,8 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAL.ADO\Context\ADODataContext.cs" />
+    <Compile Include="DAL.ADO\Repositories\ADOUnitOfWork.cs" />
+    <Compile Include="DAL.ADO\Repositories\CategoryRepository.cs" />
+    <Compile Include="DAL.ADO\Repositories\ProductRepository.cs" />
+    <Compile Include="DAL.ADO\Repositories\ProviderRepository.cs" />
     <Compile Include="DAL.EF\Context\EFDataContext.cs" />
-    <Compile Include="DAL.EF\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Shared\IUnitOfWork.cs" />
     <Compile Include="DAL.EF\Repositories\CategoryRepository.cs" />
     <Compile Include="DAL.EF\Repositories\EFUnitOfWork.cs" />
     <Compile Include="DAL.EF\Repositories\ProductRepository.cs" />
@@ -63,8 +68,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DAL.ADO\Context\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

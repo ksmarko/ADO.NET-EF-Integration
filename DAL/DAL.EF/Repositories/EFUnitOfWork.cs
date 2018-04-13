@@ -21,6 +21,7 @@ namespace DAL.DAL.EF.Repositories
         {
             db = new EFDataContext(connectionString);
         }
+
         public IRepository<Product> Products
         {
             get
