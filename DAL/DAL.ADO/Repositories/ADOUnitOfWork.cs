@@ -4,7 +4,10 @@ using DAL.Shared;
 using DAL.Shared.Entities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,81 +16,40 @@ namespace DAL.DAL.ADO.Repositories
 {
     public class ADOUnitOfWork : IUnitOfWork
     {
-        private ProductRepository productRepository;
-        private ProviderRepository providerRepository;
-        private CategoryRepository categoryRepository;
+        private ADODataContext _context;
 
-        private IDbConnection _connection;
-        private IDbTransaction _transaction;
+        public IRepository<Product> Products { get; private set; }
+        public IRepository<Category> Categories { get; private set; }
+        public IRepository<Provider> Providers { get; private set; }
 
-        public ADOUnitOfWork(IDbConnection connection)
+        public ADOUnitOfWork(string connectionString)
         {
-            _connection = connection;
-            _transaction = connection.BeginTransaction();
+            _context = new ADODataContext(connectionString);
+
+            Products = new ProductRepository(_context);
+            Categories = new CategoryRepository(_context);
+            Providers = new ProviderRepository(_context);
         }
 
-        public IRepository<Product> Products
+        public void Save() => _context.SaveChanges();
+
+        private bool disposed = false;
+        public virtual void Dispose(bool disposing)
         {
-            get
+            if (!disposed)
             {
-                using (var uow = ADODataContext.Create(_connection.ConnectionString))
+                if (disposing)
                 {
-                    if (productRepository == null)
-                        productRepository = new ProductRepository(uow);
-                    return productRepository;
+                    _context.Dispose();
                 }
+                disposed = true;
             }
-        }
-
-        public IRepository<Provider> Providers
-        {
-            get
-            {
-                using (var uow = ADODataContext.Create(_connection.ConnectionString))
-                {
-                    if (providerRepository == null)
-                        providerRepository = new ProviderRepository(uow);
-                    return providerRepository;
-                }
-            }
-        }
-
-        public IRepository<Category> Categories
-        {
-            get
-            {
-                using (var uow = ADODataContext.Create(_connection.ConnectionString))
-                {
-                    if (categoryRepository == null)
-                        categoryRepository = new CategoryRepository(uow);
-                    return categoryRepository;
-                }
-            }
-        }
-
-        public void Save()
-        {
-            if (_transaction == null)
-                throw new InvalidOperationException
-                 ("Transaction have already been committed. Check your transaction handling.");
-
-            _transaction.Commit();
-            _transaction = null;
         }
 
         public void Dispose()
         {
-            if (_transaction != null)
-            {
-                _transaction.Rollback();
-                _transaction = null;
-            }
-
-            if (_connection != null)
-            {
-                _connection.Close();
-                _connection = null;
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
