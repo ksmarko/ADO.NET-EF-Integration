@@ -38,6 +38,7 @@ namespace DAL.DAL.ADO.Context
             _connectionString = connectionString;
 
             InitializeDb();
+            InitializeTables();
 
             _productsTableAdapter = new SqlDataAdapter("SELECT * FROM Products", _connectionString);
             _categoriesTableAdapter = new SqlDataAdapter("SELECT * FROM Categories", _connectionString);
@@ -55,7 +56,6 @@ namespace DAL.DAL.ADO.Context
             _providersTableAdapter.Fill(_db, "Providers");
             _providerProductsTableAdapter.Fill(_db, "ProviderProducts");
 
-            InitializeTables();
             BuildTableRelationship();
 
             Products = _db.Tables["Products"];
@@ -133,7 +133,7 @@ namespace DAL.DAL.ADO.Context
                     connection.Open();
                     if (command.ExecuteScalar() != DBNull.Value) //database exists
                     {
-                        //close all connections
+                        //todo: close all connections
                         string q = "Use master DROP DATABASE [" + dbName + "]";
                         SqlCommand c = new SqlCommand(q, connection);
                         c.ExecuteNonQuery();
@@ -179,9 +179,32 @@ namespace DAL.DAL.ADO.Context
                 string[] sqlExpressions =
                 {
                 "INSERT INTO Categories (Name) VALUES ('Electronics')",
-                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Laptop X', 666000, 1)",
+                "INSERT INTO Categories (Name) VALUES ('Food')",
+                "INSERT INTO Categories (Name) VALUES ('Clothes')",
+                "INSERT INTO Categories (Name) VALUES ('Sport')",
+
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Laptop', 35000, 1)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('iPhone6s', 16000, 1)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Chips', 30, 2)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Beer', 20, 2)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Bicycle', 40000, 4)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Dress', 600, 3)",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('T-shirt', 120, 3)",
+                
                 "INSERT INTO Providers (Name, Location) VALUES ('Apple', 'USA')",
-                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (1, 1)"
+                "INSERT INTO Providers (Name, Location) VALUES ('BMW', 'Germany')",
+                "INSERT INTO Providers (Name, Location) VALUES ('Lays', 'Ukraine')",
+                "INSERT INTO Providers (Name, Location) VALUES ('OJJI', 'Russia')",
+                "INSERT INTO Providers (Name, Location) VALUES ('Baltyka', 'Ukraine')",
+
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (1, 1)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (1, 2)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (3, 3)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (5, 4)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (2, 5)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (4, 6)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (2, 7)",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (4, 7)"
                 };
 
                 foreach (var el in sqlExpressions)
@@ -191,7 +214,7 @@ namespace DAL.DAL.ADO.Context
                 }
             }
 
-            SaveChanges();
+            //SaveChanges();
         }
     }
 }
