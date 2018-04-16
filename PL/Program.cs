@@ -6,6 +6,7 @@ using Ninject.Modules;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -28,9 +29,11 @@ namespace PL
         static void Main(string[] args)
         {
             //Console.WriteLine("Select DB: 0 - EF, 1 - ADO");
-            //int selection = Convert.ToInt32(Console.ReadLine());
+            int selection = 1;// Convert.ToInt32(Console.ReadLine());
             BLL.Infrastructure.AutoMapperConfig.Initialize();
-            NinjectModule serviceModule = new ServiceModule("DefaultConnection", /*selection == 0? StorageContext.EF : */StorageContext.ADO);
+            NinjectModule serviceModule = new ServiceModule(
+                ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, 
+                selection == 0? StorageContext.EF : StorageContext.ADO);
             NinjectModule module = new ConnModule();
             var kernel = new StandardKernel(serviceModule, module);
             kernel.Get(typeof(Store));

@@ -54,7 +54,7 @@ namespace DAL.DAL.ADO.Repositories
             if (query.Length == 0) return null;
 
             DataRow row = query[0];
-            var supplier = new Provider
+            var provider = new Provider
             {
                 Id = (int)row["Id"],
                 Name = (string)row["Name"],
@@ -62,21 +62,27 @@ namespace DAL.DAL.ADO.Repositories
                 Products = new List<Product>()
             };
 
-            //var productRows = _context.GetChildRowsFor
-            //                      (row, "ProviderProduct");
+            query = _context.ProviderProducts.Select($"Provider_Id = {provider.Id}");
 
-            //for (int i = 0; i < productRows.Length; i++)
-            //{
-            //    supplier.Products.Add(new Product
-            //    {
-            //        Id = (int)productRows[i]["Id"],
-            //        Name = (string)productRows[i]["Name"],
-            //        CategoryId = (int)productRows[i]["CategoryId"],
-            //        Price = (double)productRows[i]["Price"]
-            //    });
-            //}
+            foreach(DataRow _row in query)
+            {
+                int productId = (int)_row["Product_Id"];
 
-            return supplier;
+                DataRow[] query1 = _context.Products.Select($"Id = {productId}");
+                DataRow row1 = query1[0];
+
+                var product = new Product
+                {
+                    Id = (int)row1["Id"],
+                    Name = (string)row1["Name"],
+                    Price = (double)row1["Price"],
+                    CategoryId = (int)row1["CategoryId"]
+                };
+
+                provider.Products.Add(product);
+            }
+
+            return provider;
         }
 
         public IEnumerable<Provider> GetAll()
@@ -85,7 +91,7 @@ namespace DAL.DAL.ADO.Repositories
 
             for (int curRow = 0; curRow < _table.Rows.Count; curRow++)
             {
-                var supplier = new Provider
+                var provider = new Provider
                 {
                     Id = (int)_table.Rows[curRow]["Id"],
                     Name = (string)_table.Rows[curRow]["Name"],
@@ -93,21 +99,29 @@ namespace DAL.DAL.ADO.Repositories
                     Products = new List<Product>()
                 };
 
-                //var productRows = _context.GetChildRowsFor
-                //                  (_table.Rows[curRow], "ProviderProduct");
+                var productRows = _context.GetChildRowsFor
+                                  (_table.Rows[curRow], "ProviderProviderProducts");
 
-                //for (int i = 0; i < productRows.Length; i++)
-                //{
-                //    supplier.Products.Add(new Product
-                //    {
-                //        Id = (int)productRows[i]["Id"],
-                //        Name = (string)productRows[i]["Name"],
-                //        CategoryId = (int)productRows[i]["CategoryId"],
-                //        Price = (double)productRows[i]["Price"]
-                //    });
-                //}
+                for (int i = 0; i < productRows.Length; i++)
+                {
+                    if ((int)productRows[i]["Provider_Id"] == provider.Id)
+                    {
+                        int productId = (int)productRows[i]["Product_Id"];
 
-                providers.Add(supplier);
+                        for (int j = 0; j < _context.Products.Rows.Count; j++ )
+                            if ((int)_context.Products.Rows[j]["Id"] == productId)
+
+                        provider.Products.Add(new Product
+                        {
+                            Id = (int)_context.Products.Rows[j]["Id"],
+                            Name = (string)_context.Products.Rows[j]["Name"],
+                            CategoryId = (int)_context.Products.Rows[j]["CategoryId"],
+                            Price = (double)_context.Products.Rows[j]["Price"]
+                        });
+                    }
+                }
+
+                providers.Add(provider);
             }
 
             return providers;
