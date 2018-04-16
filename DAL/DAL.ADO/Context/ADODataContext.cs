@@ -44,6 +44,7 @@ namespace DAL.DAL.ADO.Context
             _providersTableAdapter = new SqlDataAdapter("SELECT * FROM Providers", _connectionString);
             _providerProductsTableAdapter = new SqlDataAdapter("SELECT * FROM ProviderProducts", _connectionString);
 
+
             _sqlCbProducts = new SqlCommandBuilder(_productsTableAdapter);
             _sqlCbCategories = new SqlCommandBuilder(_categoriesTableAdapter);
             _sqlCbProviders = new SqlCommandBuilder(_providersTableAdapter);
@@ -54,6 +55,7 @@ namespace DAL.DAL.ADO.Context
             _providersTableAdapter.Fill(_db, "Providers");
             _providerProductsTableAdapter.Fill(_db, "ProviderProducts");
 
+            InitializeTables();
             BuildTableRelationship();
 
             Products = _db.Tables["Products"];
@@ -120,14 +122,10 @@ namespace DAL.DAL.ADO.Context
 
         private void InitializeDb()
         {
-            //drop create db +
-            //create tales 
-            //build the table relations
-            //fill the tables
-            //save changes
             string connString = @"data source = (localdb)\MSSQLLocalDB; Integrated Security = True; MultipleActiveResultSets = True";
             string dbName = new SqlConnection(_connectionString).Database;
 
+            //drop create db
             using (var connection = new SqlConnection(connString))
             {
                 using (var command = new SqlCommand($"SELECT db_id('{dbName}')", connection))
@@ -135,27 +133,63 @@ namespace DAL.DAL.ADO.Context
                     connection.Open();
                     if (command.ExecuteScalar() != DBNull.Value) //database exists
                     {
-                        string query = "Use master DROP DATABASE [" + dbName + "]";
-                        SqlCommand cmd = new SqlCommand(query, connection);
-                        cmd.ExecuteNonQuery();
+                        //close all connections
+                        string q = "Use master DROP DATABASE [" + dbName + "]";
+                        SqlCommand c = new SqlCommand(q, connection);
+                        c.ExecuteNonQuery();
                     }
-                    else
-                    {
-                        string query = "Use master Create DATABASE [" + dbName + "]";
-                        SqlCommand cmd = new SqlCommand(query, connection);
-                        cmd.ExecuteNonQuery();
-                    }
+
+                    string query = "Create DATABASE [" + dbName + "]";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.ExecuteNonQuery();
                 }
             }
 
-            //string sqlExpression = "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Laptop X', 666000, 1)";
+            //creating tables
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string[] queries =
+                {
+                    "Create table [dbo].[Categories] ([Id] [int] IDENTITY(1,1) NOT NULL, [Name][nvarchar](max) NULL, CONSTRAINT[PK_dbo.Categories] PRIMARY KEY CLUSTERED ([Id] ASC )WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]",
+                    "CREATE TABLE [dbo].[Products]([Id][int] IDENTITY(1, 1) NOT NULL, [Name] [nvarchar](max) NULL, [Price] [float] NOT NULL,[CategoryId] [int] NULL, CONSTRAINT[PK_dbo.Products] PRIMARY KEY CLUSTERED([Id] ASC)WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]",
+                    "ALTER TABLE[dbo].[Products] WITH CHECK ADD CONSTRAINT[FK_dbo.Products_dbo.Categories_CategoryId] FOREIGN KEY([CategoryId]) REFERENCES[dbo].[Categories]([Id])",
+                    "ALTER TABLE[dbo].[Products] CHECK CONSTRAINT[FK_dbo.Products_dbo.Categories_CategoryId]",
+                    "CREATE TABLE [dbo].[Providers]([Id][int] IDENTITY(1, 1) NOT NULL, [Name] [nvarchar](max) NULL,[Location] [nvarchar](max) NULL, CONSTRAINT[PK_dbo.Providers] PRIMARY KEY CLUSTERED([Id] ASC)WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]",
+                    "CREATE TABLE [dbo].[ProviderProducts]([Provider_Id][int] NOT NULL, [Product_Id] [int] NOT NULL,CONSTRAINT[PK_dbo.ProviderProducts] PRIMARY KEY CLUSTERED ( [Provider_Id] ASC, [Product_Id] ASC)WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY]",
+                    "ALTER TABLE[dbo].[ProviderProducts] WITH CHECK ADD CONSTRAINT[FK_dbo.ProviderProducts_dbo.Products_Product_Id] FOREIGN KEY([Product_Id])REFERENCES[dbo].[Products] ([Id]) ON DELETE CASCADE",
+                    "ALTER TABLE[dbo].[ProviderProducts] CHECK CONSTRAINT[FK_dbo.ProviderProducts_dbo.Products_Product_Id]",
+                    "ALTER TABLE[dbo].[ProviderProducts] WITH CHECK ADD CONSTRAINT[FK_dbo.ProviderProducts_dbo.Providers_Provider_Id] FOREIGN KEY([Provider_Id]) REFERENCES[dbo].[Providers] ([Id]) ON DELETE CASCADE",
+                    "ALTER TABLE[dbo].[ProviderProducts] CHECK CONSTRAINT[FK_dbo.ProviderProducts_dbo.Providers_Provider_Id]"
+                };
 
-            //using (SqlConnection connection = new SqlConnection(_connectionString))
-            //{
-            //    connection.Open();
-            //    SqlCommand command = new SqlCommand(sqlExpression, connection);
-            //    int number = command.ExecuteNonQuery();
-            //}
+                foreach (var query in queries)
+                {
+                    var cmd = new SqlCommand(query, conn);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void InitializeTables()
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                string[] sqlExpressions =
+                {
+                "INSERT INTO Categories (Name) VALUES ('Electronics')",
+                "INSERT INTO Products (Name, Price, CategoryId) VALUES ('Laptop X', 666000, 1)",
+                "INSERT INTO Providers (Name, Location) VALUES ('Apple', 'USA')",
+                "INSERT INTO ProviderProducts (Provider_Id, Product_Id) VALUES (1, 1)"
+                };
+
+                foreach (var el in sqlExpressions)
+                {
+                    SqlCommand command = new SqlCommand(el, connection);
+                    int number = command.ExecuteNonQuery();
+                }
+            }
 
             SaveChanges();
         }
