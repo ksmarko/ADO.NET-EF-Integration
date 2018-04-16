@@ -32,19 +32,19 @@ namespace DAL.DAL.ADO.Repositories
 
         public void Delete(int id)
         {
-            var supplier = Get(id);
+            //var provider = Get(id);
 
-            if (supplier != null)
-            {
-                DataRow rowToDelete = _table.Select($"Id = {id}")[0];
-                rowToDelete.Delete();
-                return;
-            }
+            //if (provider != null)
+            //{
+            //    DataRow rowToDelete = _table.Select($"Id = {id}")[0];
+            //    rowToDelete.Delete();
+            //    return;
+            //}
         }
 
         public IEnumerable<Provider> Find(Func<Provider, bool> predicate)
         {
-            throw new NotImplementedException();
+            return GetAll().Where(predicate);
         }
 
         public Provider Get(int id)

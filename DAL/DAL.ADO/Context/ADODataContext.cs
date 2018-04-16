@@ -44,8 +44,7 @@ namespace DAL.DAL.ADO.Context
             _categoriesTableAdapter = new SqlDataAdapter("SELECT * FROM Categories", _connectionString);
             _providersTableAdapter = new SqlDataAdapter("SELECT * FROM Providers", _connectionString);
             _providerProductsTableAdapter = new SqlDataAdapter("SELECT * FROM ProviderProducts", _connectionString);
-
-
+                       
             _sqlCbProducts = new SqlCommandBuilder(_productsTableAdapter);
             _sqlCbCategories = new SqlCommandBuilder(_categoriesTableAdapter);
             _sqlCbProviders = new SqlCommandBuilder(_providersTableAdapter);
@@ -213,8 +212,6 @@ namespace DAL.DAL.ADO.Context
                     int number = command.ExecuteNonQuery();
                 }
             }
-
-            //SaveChanges();
         }
     }
 }

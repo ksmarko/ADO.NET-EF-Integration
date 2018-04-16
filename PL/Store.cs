@@ -20,6 +20,8 @@ namespace PL
 
         public void Run()
         {
+            Console.Clear();
+
             Print(productService.GetProducts(), "List of products:");
             Print(productService.GetProvidersForCategory(3), "List of clothes providers");
             Print(productService.GetProviderProducts(1), "List of provider's products");

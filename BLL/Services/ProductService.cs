@@ -27,12 +27,14 @@ namespace BLL.Services
 
         public IEnumerable<ProductDTO> GetProviderProducts(int providerId)
         {
-            var list = new List<ProductDTO>();
-            var provs = GetProviders().Where(x => x.Id == providerId);
-            foreach (var el in provs)
-                list.AddRange(el.Products);
+            var result = new List<ProductDTO>();
 
-            return list;
+            foreach(var product in GetProducts())
+                foreach (var provider in product.Providers)
+                    if (provider.Id == providerId)
+                        result.Add(product);
+
+            return result;
         }
 
         public IEnumerable<ProductDTO> FindProduct(Func<ProductDTO, bool> predicate)

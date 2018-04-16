@@ -28,14 +28,16 @@ namespace PL
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("Select DB: 0 - EF, 1 - ADO");
-            int selection = 1;// Convert.ToInt32(Console.ReadLine());
             BLL.Infrastructure.AutoMapperConfig.Initialize();
+
+            Console.WriteLine("Select DB: 0 - EF, 1 - ADO");
+            int selection = Convert.ToInt32(Console.ReadLine());
             NinjectModule serviceModule = new ServiceModule(
                 ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, 
                 selection == 0? StorageContext.EF : StorageContext.ADO);
             NinjectModule module = new ConnModule();
             var kernel = new StandardKernel(serviceModule, module);
+
             kernel.Get(typeof(Store));
 
             Console.ReadKey();
