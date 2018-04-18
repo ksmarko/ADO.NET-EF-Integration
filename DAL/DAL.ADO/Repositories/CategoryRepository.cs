@@ -1,13 +1,10 @@
 ﻿using DAL.DAL.ADO.Context;
-using DAL.DAL.EF.Interfaces;
 using DAL.Shared;
 using DAL.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.DAL.ADO.Repositories
 {
@@ -22,25 +19,11 @@ namespace DAL.DAL.ADO.Repositories
             _table = db.Categories;
         }
 
-        public void Create(Category item) //+
+        public void Create(Category item)
         {
             DataRow newRow = _table.NewRow();
             newRow["Name"] = item.Name;
             _table.Rows.Add(newRow);
-        }
-
-        public void Delete(int id)
-        {
-            //TODO: add cascade removing for Product table (field CategoryId)
-
-            //var category = Get(id);
-
-            //if (category != null)
-            //{
-            //    DataRow rowToDelete = _table.Select($"Id = {id}")[0];
-            //    rowToDelete.Delete();
-            //    return;
-            //}
         }
 
         public IEnumerable<Category> Find(Func<Category, bool> predicate)
@@ -48,7 +31,7 @@ namespace DAL.DAL.ADO.Repositories
             return GetAll().Where(predicate);
         }
 
-        public Category Get(int id) //+
+        public Category Get(int id) 
         {
             DataRow[] query = _table.Select($"Id = {id}");
 
@@ -62,8 +45,7 @@ namespace DAL.DAL.ADO.Repositories
                 Products = new List<Product>()
             };
 
-            var productRows = db.GetChildRowsFor
-                                  (row, "CategoryProduct");
+            var productRows = db.GetChildRowsFor(row, "CategoryProduct");
 
             for (int i = 0; i < productRows.Length; i++)
             {
@@ -79,7 +61,7 @@ namespace DAL.DAL.ADO.Repositories
             return category;
         }
 
-        public IEnumerable<Category> GetAll() //+
+        public IEnumerable<Category> GetAll()
         {
             var categories = new List<Category>();
 
@@ -92,8 +74,7 @@ namespace DAL.DAL.ADO.Repositories
                     Products = new List<Product>()
                 };
 
-                var productRows = db.GetChildRowsFor
-                                      (_table.Rows[curRow], "CategoryProduct");
+                var productRows = db.GetChildRowsFor(_table.Rows[curRow], "CategoryProduct");
 
                 for (int i = 0; i < productRows.Length; i++)
                 {

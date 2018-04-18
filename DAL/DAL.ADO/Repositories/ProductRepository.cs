@@ -1,13 +1,10 @@
 ﻿using DAL.DAL.ADO.Context;
-using DAL.DAL.EF.Interfaces;
 using DAL.Shared;
 using DAL.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.DAL.ADO.Repositories
 {
@@ -22,7 +19,7 @@ namespace DAL.DAL.ADO.Repositories
             _table = _context.Products;
         }
 
-        public void Create(Product item) //+
+        public void Create(Product item) 
         {
             DataRow newRow = _table.NewRow();
 
@@ -31,18 +28,6 @@ namespace DAL.DAL.ADO.Repositories
             newRow["CategoryId"] = item.CategoryId;
 
             _table.Rows.Add(newRow);
-        }
-
-        public void Delete(int id)
-        {
-            //var product = Get(id);
-
-            //if (product != null)
-            //{
-            //    DataRow rowToDelete = _table.Select($"Id = {id}")[0];
-            //    rowToDelete.Delete();
-            //    return;
-            //}
         }
 
         public IEnumerable<Product> Find(Func<Product, bool> predicate)
@@ -73,7 +58,7 @@ namespace DAL.DAL.ADO.Repositories
                                 (row, "CategoryProduct")["Name"]
                 }
             };
-            /////////
+
             query = _context.ProviderProducts.Select($"Product_Id = {product.Id}");
 
             foreach (DataRow _row in query)
@@ -92,7 +77,7 @@ namespace DAL.DAL.ADO.Repositories
 
                 product.Providers.Add(provider);
             }
-            ///////////////
+
             return product;
         }
 
@@ -121,8 +106,7 @@ namespace DAL.DAL.ADO.Repositories
                     Providers = new List<Provider>()
                 };
 
-                var providerRows = _context.GetChildRowsFor
-                  (_table.Rows[curRow], "ProductProviderProducts");
+                var providerRows = _context.GetChildRowsFor(_table.Rows[curRow], "ProductProviderProducts");
 
                 for (int i = 0; i < providerRows.Length; i++)
                 {

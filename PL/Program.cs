@@ -4,26 +4,10 @@ using BLL.Services;
 using Ninject;
 using Ninject.Modules;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity;
-using Unity.Exceptions;
 
 namespace PL
 {
-    public class ConnModule : NinjectModule
-    {
-        public override void Load()
-        {
-            Bind<IShopService>().To<ShopService>();
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -35,7 +19,7 @@ namespace PL
             NinjectModule serviceModule = new ServiceModule(
                 ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, 
                 selection == 0? StorageContext.EF : StorageContext.ADO);
-            NinjectModule module = new ConnModule();
+            NinjectModule module = new ConnectionModule();
             var kernel = new StandardKernel(serviceModule, module);
 
             kernel.Get(typeof(Store));

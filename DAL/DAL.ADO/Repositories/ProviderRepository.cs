@@ -1,13 +1,10 @@
 ﻿using DAL.DAL.ADO.Context;
-using DAL.DAL.EF.Interfaces;
 using DAL.Shared;
 using DAL.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.DAL.ADO.Repositories
 {
@@ -28,18 +25,6 @@ namespace DAL.DAL.ADO.Repositories
             newRow["Name"] = item.Name;
             newRow["Location"] = item.Location;
             _table.Rows.Add(newRow);
-        }
-
-        public void Delete(int id)
-        {
-            //var provider = Get(id);
-
-            //if (provider != null)
-            //{
-            //    DataRow rowToDelete = _table.Select($"Id = {id}")[0];
-            //    rowToDelete.Delete();
-            //    return;
-            //}
         }
 
         public IEnumerable<Provider> Find(Func<Provider, bool> predicate)
@@ -99,8 +84,7 @@ namespace DAL.DAL.ADO.Repositories
                     Products = new List<Product>()
                 };
 
-                var productRows = _context.GetChildRowsFor
-                                  (_table.Rows[curRow], "ProviderProviderProducts");
+                var productRows = _context.GetChildRowsFor(_table.Rows[curRow], "ProviderProviderProducts");
 
                 for (int i = 0; i < productRows.Length; i++)
                 {

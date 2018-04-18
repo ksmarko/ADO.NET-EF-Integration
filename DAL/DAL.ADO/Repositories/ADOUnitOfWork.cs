@@ -3,14 +3,6 @@ using DAL.DAL.EF.Interfaces;
 using DAL.Shared;
 using DAL.Shared.Entities;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.DAL.ADO.Repositories
 {
@@ -34,6 +26,7 @@ namespace DAL.DAL.ADO.Repositories
         public void Save() => _context.SaveChanges();
 
         private bool disposed = false;
+
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)

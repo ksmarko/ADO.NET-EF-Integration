@@ -1,15 +1,6 @@
-﻿using DAL.DAL.ADO.Repositories;
-using DAL.DAL.EF.Interfaces;
-using DAL.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DAL.DAL.ADO.Context
 {
     public class ADODataContext

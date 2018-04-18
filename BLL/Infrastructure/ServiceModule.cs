@@ -2,15 +2,6 @@
 using DAL.DAL.EF.Interfaces;
 using DAL.DAL.EF.Repositories;
 using Ninject.Modules;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Infrastructure
 {
@@ -30,9 +21,7 @@ namespace BLL.Infrastructure
             if (context == StorageContext.EF)
                 Bind<IUnitOfWork>().To<EFUnitOfWork>().WithConstructorArgument(connectionString);
             else if (context == StorageContext.ADO)
-            {
                 Bind<IUnitOfWork>().To<ADOUnitOfWork>().WithConstructorArgument(connectionString);
-            }
         }
     }
 

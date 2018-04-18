@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DAL.Shared.Entities
 {
@@ -10,13 +6,9 @@ namespace DAL.Shared.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public double Price { get; set; }
-
-        //one to many
+        public double Price { get; set; }        
         public int? CategoryId { get; set; }
         public virtual Category Category { get; set; }
-
-        //many to many
         public virtual ICollection<Provider> Providers { get; set; }
 
         public Product()

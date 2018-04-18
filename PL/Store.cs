@@ -1,9 +1,6 @@
 ﻿using BLL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PL
 {
@@ -14,7 +11,6 @@ namespace PL
         public Store(IShopService service)
         {
             this.productService = service;
-
             Run();
         }
 
@@ -24,7 +20,7 @@ namespace PL
 
             Print(productService.GetProducts(), "List of products:");
             Print(productService.GetProvidersForCategory(3), "List of clothes providers");
-            Print(productService.GetProviderProducts(1), "List of provider's products");
+            Print(productService.GetProviderProducts(1), "List of Apple products");
             Print(productService.FindProduct(x => x.Price <= 20000), "List of products with price <= 20000:");
             Print(new List<string>(), "List of providers from Ukraine:");
 
